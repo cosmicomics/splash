@@ -1,4 +1,34 @@
+function RGBToHex(r, g, b) {
+    r = r.toString(16);
+    g = g.toString(16);
+    b = b.toString(16);
+
+    if (r.length == 1)
+        r = "0" + r;
+    if (g.length == 1)
+        g = "0" + g;
+    if (b.length == 1)
+        b = "0" + b;
+
+    return "0x" + r + g + b;
+}
+
+let strokeColor = '0xfcba03';
+
 window.onload = function () {
+
+    const img = document.getElementById('goethe');
+    const canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height);
+
+    document.getElementById('selector').addEventListener('click', event => {
+        const pixelData = canvas.getContext('2d').getImageData(event.offsetX, event.offsetY, 1, 1).data;
+        strokeColor = RGBToHex(pixelData[0], pixelData[1], pixelData[2]);
+    });
+
+    ////////////////////////////////////
 
     const app = new PIXI.Application({
         width: window.innerWidth,
@@ -17,7 +47,7 @@ window.onload = function () {
     brush.endFill();
 
     app.loader.add('t1', 'turner5.jpg');
-    app.loader.add('t2', 'turner1');
+    app.loader.add('t2', 'turner1.jpg');
     app.loader.load(setup);
 
     function setup(loader, resources) {
@@ -31,7 +61,7 @@ window.onload = function () {
         imageToReveal.width = app.screen.width;
         imageToReveal.height = app.screen.height;
 
-        const renderTexture = PIXI.RenderTexture.create(app.screen.width, app.screen.height);
+        //const renderTexture = PIXI.RenderTexture.create(app.screen.width, app.screen.height);
 
         //const renderTextureSprite = new PIXI.Sprite(renderTexture);
         //stage.addChild(renderTextureSprite);
@@ -57,7 +87,7 @@ window.onload = function () {
         }
 
         const circleTexture1 = generateCircleTexture(app.renderer, 10, '0xfcba03');
-        const circleTexture2 = generateCircleTexture(app.renderer, 10, '0x65c4f0');
+        //const circleTexture2 = generateCircleTexture(app.renderer, 10, '0x65c4f0');
         let circleTexture = circleTexture1;
 
         let dragging = false;
@@ -74,14 +104,21 @@ window.onload = function () {
         //strokeContainer.filters = [blurFilter];
         strokeContainer.width = app.screen.width;
         strokeContainer.height = app.screen.height;
-        
+
         const background2 = new PIXI.Sprite(resources.t1.texture);
         background2.width = app.screen.width;
         background2.height = app.screen.height;
         background2.blendMode = PIXI.BLEND_MODES.SCREEN;
-        
+
+        const background3 = new PIXI.Sprite(resources.t2.texture);
+        background3.width = app.screen.width;
+        background3.height = app.screen.height;
+        background3.blendMode = PIXI.BLEND_MODES.SCREEN;
+
         container.addChild(strokeContainer);
         container.addChild(background2);
+        //container.addChild(background3);
+        
 
         app.stage.addChild(container);
 
@@ -115,13 +152,14 @@ window.onload = function () {
         function pointerDown(event) {
             dragging = true;
             strokeSize = Math.random() * 2 + 1;
-            if (color == 1) {
+            circleTexture = generateCircleTexture(app.renderer, 10, strokeColor);
+            /*if (color == 1) {
                 circleTexture = circleTexture2;
                 color = 2;
             } else {
                 circleTexture = circleTexture1;
                 color = 1;
-            }
+            }*/
             pointerMove(event);
         }
 
