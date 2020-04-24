@@ -1,9 +1,12 @@
 window.onload = function () {
 
     const app = new PIXI.Application({
+        width: window.innerWidth,
+        height: window.innerHeight,
         view: document.getElementById('view'),
         backgroundColor: '0xFFFFFF'
     });
+
     document.body.appendChild(app.view);
     const { stage } = app;
 
@@ -30,9 +33,9 @@ window.onload = function () {
 
         const renderTexture = PIXI.RenderTexture.create(app.screen.width, app.screen.height);
 
-        const renderTextureSprite = new PIXI.Sprite(renderTexture);
-        stage.addChild(renderTextureSprite);
-        imageToReveal.mask = renderTextureSprite;
+        //const renderTextureSprite = new PIXI.Sprite(renderTexture);
+        //stage.addChild(renderTextureSprite);
+        //imageToReveal.mask = renderTextureSprite;
 
         app.stage.interactive = true;
         app.stage.on('pointerdown', pointerDown);
@@ -96,8 +99,8 @@ window.onload = function () {
                 thing.endFill();*/
                 const circleSprite = new PIXI.Sprite(circleTexture);
                 //circleSprite.blendMode = PIXI.BLEND_MODES.MULTIPLY;
-                circleSprite.x = app.renderer.plugins.interaction.mouse.global.x;
-                circleSprite.y = app.renderer.plugins.interaction.mouse.global.y;
+                circleSprite.x = app.renderer.plugins.interaction.eventData.data.global.x;
+                circleSprite.y = app.renderer.plugins.interaction.eventData.data.global.y;
                 circleSprite.anchor.set(0.5);
                 strokeContainer.addChild(circleSprite);
                 points.push({
@@ -128,8 +131,8 @@ window.onload = function () {
 
         app.ticker.add((delta) => {
             for (let i = 0; i < points.length; i++) {
-                points[i].sprite.scale.x = points[i].sprite.scale.x + ((2 * points[i].scale_max - points[i].sprite.scale.x) / 20 / points[i].scale_max);
-                points[i].sprite.scale.y = points[i].sprite.scale.y + ((4 * points[i].scale_max - points[i].sprite.scale.y) / 50 / points[i].scale_max);
+                points[i].sprite.scale.x = points[i].sprite.scale.x + ((3 * points[i].scale_max - points[i].sprite.scale.x) / 20 / points[i].scale_max);
+                points[i].sprite.scale.y = points[i].sprite.scale.y + ((4.5 * points[i].scale_max - points[i].sprite.scale.y) / 50 / points[i].scale_max);
                 //points[i].sprite.anchor.set(0.5, points[i].sprite.anchor._x + ((0 - points[i].sprite.anchor._x) / 10));
             }
         });
